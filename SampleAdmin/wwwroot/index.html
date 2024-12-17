@@ -1,0 +1,60 @@
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css"/>
+    <script src="//unpkg.com/vue@3"></script>
+    <script src="//unpkg.com/element-plus"></script>
+    <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.13/dayjs.min.js"></script>
+    <title>샘플 페이지</title>
+</head>
+<body>
+<div id="app">
+    <el-container>
+        <el-header>로그 조회 페이지</el-header>
+        <el-main>
+            <el-button @click="click_fetch">로그 불러오기</el-button>
+            <el-table :data="list">
+                <el-table-column label="시간" prop="time" :formatter="formatter_time" width="200px"></el-table-column>
+                <el-table-column label="플레이어ID" prop="playerid" width="200px"></el-table-column>
+                <el-table-column label="호출API" prop="path" width="180px"></el-table-column>
+                <el-table-column label="결과" prop="code" width="100px"></el-table-column>
+                <el-table-column label="ms" prop="ms" width="100px"></el-table-column>
+                <el-table-column label="요청" prop="request" :formatter="formatter_json" width="400px" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column label="반환" prop="response" :formatter="formatter_json" width="400px" :show-overflow-tooltip="true"></el-table-column>
+            </el-table>
+        </el-main>
+    </el-container>
+</div>
+<script>
+    const App = {
+        data() {
+            return {
+                list: []
+            }
+        },
+        methods: {
+            async click_fetch() {
+                try {
+                    const response = await axios.get('/PlayerLog/List');
+                    this.list = response.data;
+                } catch (e) {
+                    console.error('Error fetching logs:', e);
+                    this.$message.error('실패')
+                }
+            },
+            formatter_time(mlog) {
+                return dayjs(mlog.time).format('YYYY-MM-DD HH:mm:ss')
+            },
+            formatter_json(row, col, v) {
+                return JSON.stringify(v)
+            }
+        }
+    }
+    const app = Vue.createApp(App);
+    app.use(ElementPlus);
+    app.mount("#app")
+</script>
+</body>
+</html>

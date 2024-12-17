@@ -1,0 +1,15 @@
+### 로그인
+@host = http://127.0.0.1:5000
+@accesskey = a
+GET {{host}}/Player/Login
+    ?key={{accesskey}}
+
+> {%
+    client.global.set("token", response.body.token)
+%}
+
+### 이름 변경
+@name=hello
+GET {{host}}/Player/UpdateName
+    ?token={{token}}
+    &name={{name}}
